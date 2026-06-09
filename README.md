@@ -1,6 +1,6 @@
 # CORDIC_Algorithm
 CORDIC Algorithm Verification using C code
-![cos_sin](.images/combined_plot.png)
+![cos_sin](./images/combined_plot.png)
 1.first compile the program 
     gcc cordic_test.c -lm 
 
