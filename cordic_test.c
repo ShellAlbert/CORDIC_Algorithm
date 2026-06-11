@@ -104,7 +104,7 @@ void cordic_calc(float angle_in_degree, float *cos_val, float *sin_val)
 
         // factor = 1.0 / 2^i
         float factor = 1.0f / (float)power_of_2;
-
+    
         //calculation.
         float x_new=x-direction*y*factor;
         float y_new=y+direction*x*factor;
@@ -195,12 +195,26 @@ int main(void)
                math_cos, cordic_cos, \
                math_sin, cordic_sin \
                );
+        
+        //here, cos and sin value are already in the range of [-1,1].
+        //we add a DC offset to eliminate negative value, its range is [0,2].
+        float dc_offset=1.0f;
+
+        //now the range is [0,2], we need to scale it to [0,65535].
+        //65535/2=32767.5
+        //but in a 16-bits ADC, the range is [0,65535].
+        //so we need to scale the value to the range of [0,65535].
+        float cos_scaled=(cordic_cos+dc_offset)*32767.5f;
+        float sin_scaled=(cordic_sin+dc_offset)*32767.5f;
+
+        //write cos value to file for plotting.
         memset(buffer,0,sizeof(buffer));
-        sprintf(buffer,"%d\t%.2f\n",line_no,cordic_cos);
+        sprintf(buffer,"%d\t%.2f\n",line_no,/*cordic_cos*/cos_scaled);
         write(fd_cos,buffer,strlen(buffer));
 
+        //write sin value to file for plotting.
         memset(buffer,0,sizeof(buffer));
-        sprintf(buffer,"%d\t%.2f\n",line_no,cordic_sin);
+        sprintf(buffer,"%d\t%.2f\n",line_no,/*cordic_sin*/sin_scaled);
         write(fd_sin,buffer,strlen(buffer));
         line_no++;
     }
