@@ -12,3 +12,8 @@ CORDIC Algorithm Verification using C code
 
 4.plot curve to check the result
     ./gnuplot 
+
+# use pre-calculated value to prevent division
+Compare two approaches of calculate factor, the result are same.
+this is useful for implementing in FPGA design. 
+![prevent_division.png](./images/prevent_division.png)

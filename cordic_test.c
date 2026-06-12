@@ -25,6 +25,23 @@
 //  12      0.00    0.03
 //  13      0.00    0.01
 
+//use pre-calculated value to prevent division.
+// 0,1.00
+// 1,0.50
+// 2,0.25
+// 3,0.12
+// 4,0.06
+// 5,0.03
+// 6,0.02
+// 7,0.01
+// 8,0.00
+// 9,0.00
+// 10,0.00
+// 11,0.00
+// 12,0.00
+float pre_factor[]={1.00f,0.50f,0.25f,0.12f,0.06f,0.03f,0.02f,0.01f,0.00f,0.00f,0.00f,0.00f,0.00f};
+
+
 float lookup_table[13];
 void cordic_prepare_table()
 {
@@ -95,16 +112,32 @@ void cordic_calc(float angle_in_degree, float *cos_val, float *sin_val)
         //if angle lefted <0, then rotate anti-clockwise.
         float direction=(angle_left>=0)?(1.0f):(-1.0f);
 
+#if 1
         //pre-processing.
         //float factor=powf(2.0f,-i);
-
         // Replace powf(2.0f, -i) with bit shift logic
         // 2^i calculated via left shift
         int power_of_2 = 1 << i;
-
         // factor = 1.0 / 2^i
         float factor = 1.0f / (float)power_of_2;
-    
+        printf("%d,%.2f\n",i,factor);
+#else 
+        //use pre-calculated value to prevent division.
+        // 0,1.00
+        // 1,0.50
+        // 2,0.25
+        // 3,0.12
+        // 4,0.06
+        // 5,0.03
+        // 6,0.02
+        // 7,0.01
+        // 8,0.00
+        // 9,0.00
+        // 10,0.00
+        // 11,0.00
+        // 12,0.00
+        float factor=pre_factor[i];
+#endif
         //calculation.
         float x_new=x-direction*y*factor;
         float y_new=y+direction*x*factor;
@@ -220,5 +253,6 @@ int main(void)
     }
     close(fd_cos);
     close(fd_sin);
+    printf("cos0_360.dat & sin0_360.dat generated.\n");
     return 0;
 }
